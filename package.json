@@ -52,6 +52,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-beautiful-dnd": "^13.1.2",
     "@types/react-helmet": "^6.1.5",
     "@types/react-router-dom": "^5.3.2",
     "@types/styled-components": "^5.1.20"
