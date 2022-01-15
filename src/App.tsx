@@ -1,7 +1,8 @@
+import { useEffect } from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { toDoState } from "./atoms";
+import { IToDoState, saveToDos, toDoState } from "./atoms";
 import Board from "./Components/Board";
 import CreateBoard from "./Components/CreateBoard";
 
@@ -22,43 +23,56 @@ const Boards = styled.div`
   display: flex;
   width: 100%;
   min-height: 300px;
-  overflow-x: scroll;
+  justify-content: center;
+  flex-wrap: wrap;
+  /* overflow-x: auto; */
   gap: 10px;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
   const onDragEnd = (info: DropResult) => {
-    const { destination, source, draggableId } = info;
-    console.log(info);
+    const { destination, source, draggableId, type } = info;
     if (!destination) return;
     let newToDos;
-    if (destination.droppableId === "trash") {
-      setToDos((allBoards) => {
-        const boardCopy = [...allBoards[source.droppableId]];
-        boardCopy.splice(source.index, 1);
-        newToDos = { ...allBoards, [source.droppableId]: boardCopy };
-        localStorage.setItem("toDos", JSON.stringify(newToDos));
-        return newToDos;
-      });
+    if (destination.droppableId.includes("trash")) {
+      if (type === "board") {
+        setToDos((allBoards) => {
+          const keys = Object.keys(allBoards);
+          keys.splice(source.index, 1);
+          console.log(allBoards);
+          const myObj = new Map();
+          keys.forEach((m) => {
+            myObj.set(m, allBoards[m]);
+          });
+          const result = Object.fromEntries(myObj);
+          return result;
+        });
+        return;
+      } else {
+        setToDos((allBoards) => {
+          const boardCopy = [...allBoards[source.droppableId]];
+          boardCopy.splice(source.index, 1);
+          newToDos = { ...allBoards, [source.droppableId]: boardCopy };
+          return newToDos;
+        });
+      }
       return;
     }
     if (destination.droppableId === "Boards") {
       setToDos((allBoards) => {
-        console.log(allBoards);
-        const boardCopy = Object.entries(allBoards);
-        const [temp] = boardCopy.splice(source.index, 1);
-
-        boardCopy.splice(destination.index, 0, temp);
-
-        // localStorage.setItem("toDos", JSON.stringify(newToDos));
-        return boardCopy.reduce((acc, [key, value]) => {
-          console.log(acc);
-          return {
-            ...acc,
-            [key]: value,
-          };
-        }, {});
+        const keys = Object.keys(allBoards);
+        keys.splice(source.index, 1);
+        keys.splice(destination.index, 0, draggableId);
+        const newBoardList: IToDoState = {};
+        keys.forEach((key) => {
+          newBoardList[key] = allBoards[key];
+        });
+        return newBoardList;
       });
       return;
     }
@@ -70,7 +84,6 @@ function App() {
         boardCopy.splice(source.index, 1);
         boardCopy.splice(destination?.index, 0, taskObj);
         newToDos = { ...allBoards, [source.droppableId]: boardCopy };
-        localStorage.setItem("toDos", JSON.stringify(newToDos));
         return newToDos;
       });
       return;
@@ -87,13 +100,14 @@ function App() {
           [source.droppableId]: sourceBoard,
           [destination.droppableId]: destinationBoard,
         };
-        localStorage.setItem("toDos", JSON.stringify(newToDos));
         return newToDos;
       });
       return;
     }
   };
-  console.log("RENDER");
+  useEffect(() => {
+    saveToDos(toDos);
+  }, [toDos]);
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
@@ -101,14 +115,16 @@ function App() {
         <Droppable droppableId="Boards" type="board" direction="horizontal">
           {(provided) => (
             <Boards ref={provided.innerRef} {...provided.droppableProps}>
-              {Object.keys(toDos).map((boardId, index) => (
-                <Board
-                  key={boardId}
-                  boardId={boardId}
-                  toDos={toDos[boardId]}
-                  index={index}
-                />
-              ))}
+              {Object.keys(toDos).map((boardId, index) => {
+                return (
+                  <Board
+                    key={boardId}
+                    boardId={boardId}
+                    toDos={toDos[boardId]}
+                    index={index}
+                  />
+                );
+              })}
               {provided.placeholder}
             </Boards>
           )}

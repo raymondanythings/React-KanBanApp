@@ -23,12 +23,12 @@ interface IForm {
 
 const Wrapper = styled.div<{ isDragging: boolean }>`
   width: 300px;
-  padding: 0 10px;
-  padding-top: 10px;
+  padding: 10px 10px;
   background-color: ${(props) =>
     props.isDragging ? props.theme.hoverColor : props.theme.boardColor};
   border-radius: 5px;
   min-height: 300px;
+  height: fit-content;
   display: flex;
   flex-direction: column;
   flex: 0 0 auto;
@@ -57,7 +57,7 @@ const Area = styled.div<IAreaProps>`
   padding: 20px;
 `;
 
-const Form = styled.form`
+export const Form = styled.form`
   padding: 0px 20px;
   margin: 0 auto;
   margin-bottom: 5px;
@@ -103,11 +103,13 @@ function Board({ toDos, boardId, index }: IBoardProps) {
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
-          <Title {...provided.dragHandleProps}>{boardId.toUpperCase()}</Title>
+          <Title {...provided.dragHandleProps}>
+            {boardId.toUpperCase().trim()}
+          </Title>
           <Form onSubmit={handleSubmit(onValid)}>
             <input
               type="text"
-              placeholder={`Add Task on ${boardId}`}
+              placeholder={`Add Task on ${boardId.trim()}`}
               {...register("toDo", {
                 required: true,
               })}

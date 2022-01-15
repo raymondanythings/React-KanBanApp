@@ -20,24 +20,22 @@ const TrashCan = styled.div`
 `;
 
 const TrashTarget = styled.div`
-  position: absolute;
   height: 100px;
-  width: 100px;
+  width: 20px;
 `;
 
 function Trash() {
   return (
     <TrashCan>
-      <Droppable type="board" droppableId="trash">
+      <Droppable type="card" droppableId="trash-card">
         {(provided) => (
           <TrashTarget ref={provided.innerRef} {...provided.droppableProps}>
             {provided.placeholder}
           </TrashTarget>
         )}
       </Droppable>
-
       <BsTrash />
-      <Droppable type="card" droppableId="trash">
+      <Droppable type="board" droppableId="trash-board">
         {(provided) => (
           <TrashTarget ref={provided.innerRef} {...provided.droppableProps}>
             {provided.placeholder}

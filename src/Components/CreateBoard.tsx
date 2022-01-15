@@ -2,6 +2,7 @@ import { ErrorMessage } from "@hookform/error-message";
 import { useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { saveToDos, toDoState } from "../atoms";
+import { Form } from "./Board";
 
 interface IBoard {
   board: string;
@@ -21,14 +22,14 @@ function CreateBoard() {
       return setError("board", { message: "Board is Full" });
     }
     setToDos((allBoards) => {
-      const newBoard = { [board]: [], ...allBoards };
+      const newBoard = { [" " + board]: [], ...allBoards };
       saveToDos(newBoard);
       return newBoard;
     });
     setValue("board", "");
   };
   return (
-    <form onSubmit={handleSubmit(onValid)}>
+    <Form onSubmit={handleSubmit(onValid)}>
       <input
         type="text"
         placeholder="ADD BOARD"
@@ -37,7 +38,7 @@ function CreateBoard() {
         })}
       />
       <ErrorMessage errors={errors} name="board" />
-    </form>
+    </Form>
   );
 }
 

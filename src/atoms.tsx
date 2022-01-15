@@ -3,7 +3,11 @@ import { atom } from "recoil";
 export const loadToDos = (): IToDoState | {} => {
   const toDos = localStorage.getItem("toDos");
   if (toDos) return JSON.parse(toDos);
-  return {};
+  return {
+    "To Do": [],
+    doing: [],
+    done: [],
+  };
 };
 
 export const saveToDos = (toDos: IToDoState) => {
@@ -14,7 +18,7 @@ export interface ITodo {
   id: number;
   text: string;
 }
-interface IToDoState {
+export interface IToDoState {
   [key: string]: ITodo[];
 }
 
