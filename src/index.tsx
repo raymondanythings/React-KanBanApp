@@ -63,6 +63,7 @@ body {
   background-color:${(props) => props.theme.bgColor};
   color:black;
   line-height: 1.2;
+  overflow-y:hidden;
 }
 a {
   text-decoration:none;

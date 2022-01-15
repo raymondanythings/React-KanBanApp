@@ -5,5 +5,7 @@ declare module "styled-components" {
     bgColor: string;
     boardColor: string;
     cardColor: string;
+    hoverColor: string;
+    DefaultTransition: string;
   }
 }

@@ -1,14 +1,24 @@
-import { atom, selector } from "recoil";
+import { atom } from "recoil";
 
+export const loadToDos = (): IToDoState | {} => {
+  const toDos = localStorage.getItem("toDos");
+  if (toDos) return JSON.parse(toDos);
+  return {};
+};
+
+export const saveToDos = (toDos: IToDoState) => {
+  localStorage.setItem("toDos", JSON.stringify(toDos));
+};
+
+export interface ITodo {
+  id: number;
+  text: string;
+}
 interface IToDoState {
-  [key: string]: string[];
+  [key: string]: ITodo[];
 }
 
 export const toDoState = atom<IToDoState>({
   key: "toDo",
-  default: {
-    "To Do": ["a", "b", "c"],
-    doing: ["d", "e"],
-    done: ["f"],
-  },
+  default: loadToDos(),
 });
