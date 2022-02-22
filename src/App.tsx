@@ -44,7 +44,6 @@ function App() {
         setToDos((allBoards) => {
           const keys = Object.keys(allBoards);
           keys.splice(source.index, 1);
-          console.log(allBoards);
           const myObj = new Map();
           keys.forEach((m) => {
             myObj.set(m, allBoards[m]);
